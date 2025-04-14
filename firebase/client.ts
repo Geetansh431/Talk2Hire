@@ -1,19 +1,16 @@
-
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
-
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAu3c3kMHV9oteWakzzn5LXyu8yKX3tbf0",
-  authDomain: "talk2hire-bfe39.firebaseapp.com",
-  projectId: "talk2hire-bfe39",
-  storageBucket: "talk2hire-bfe39.firebasestorage.app",
-  messagingSenderId: "129508234159",
-  appId: "1:129508234159:web:46988716899a0ce182d55a",
-  measurementId: "G-623LGVH9WQ"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
-
 
 const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
