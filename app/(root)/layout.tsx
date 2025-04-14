@@ -8,7 +8,7 @@ const layout = async ({ children }: { children: ReactNode }) => {
 
   const isUserAuthenticated = await isAuthenticated();
   if (!isUserAuthenticated) {
-    redirect("/login");
+    redirect("/sign-up");
   }
 
   return (
