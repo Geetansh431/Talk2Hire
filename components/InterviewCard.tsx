@@ -7,6 +7,16 @@ import Link from "next/link";
 import DisplayTechIcons from "./DisplayTechIcons";
 import { GetFeedbackByInterviewId } from "@/lib/actions/general.action";
 
+interface InterviewCardProps {
+  id: string;
+  userId: string;
+  role: string;
+  type: string;
+  techstack: string[];
+  createdAt: string;
+  currentUserId?: string;
+}
+
 const InterviewCard = async ({
   id,
   userId,
@@ -14,14 +24,17 @@ const InterviewCard = async ({
   type,
   techstack,
   createdAt,
+  currentUserId,
 }: InterviewCardProps) => {
 
-  const feedback = userId && id ? await GetFeedbackByInterviewId({ interviewId: id, userId }) : null;
+  const feedback = (userId && id && userId === currentUserId) 
+    ? await GetFeedbackByInterviewId({ interviewId: id, userId }) 
+    : null;
 
   const normalizedType = /mix/gi.test(type) ? "Mixed" : type;
-  const formattedDate = dayjs(
-    feedback?.createdAt || createdAt || Date.now()
-  ).format("MMM D, YYYY");
+  const formattedDate = dayjs(createdAt || Date.now()).format("MMM D, YYYY");
+
+  const isOwner = userId === currentUserId;
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">
@@ -50,15 +63,18 @@ const InterviewCard = async ({
               <p>{formattedDate}</p>
             </div>
 
-            <div className="flex flex-row gap-2 items-center">
-              <Image src="/star.svg" width={22} height={22} alt="star" />
-              <p>{feedback?.totalScore || "---"}/100</p>
-            </div>
+            {isOwner && feedback && (
+              <div className="flex flex-row gap-2 items-center">
+                <Image src="/star.svg" width={22} height={22} alt="star" />
+                <p>{feedback.totalScore}/100</p>
+              </div>
+            )}
           </div>
 
           <p className="line-clamp-2 mt-5">
-            {feedback?.finalAssessment ||
-              "You haven't taken this interview yet. Take it now to improve your skills."}
+            {isOwner && feedback
+              ? feedback.finalAssessment
+              : "You haven't taken this interview yet. Take it now to improve your skills."}
           </p>
         </div>
         <div className="flex flex-row justify-between">
@@ -66,12 +82,12 @@ const InterviewCard = async ({
           <Button className="btn-primary">
             <Link
               href={
-                feedback
+                isOwner && feedback
                   ? `/interview/${id}/feedback`
                   : `interview/${id}`
               }
             >
-              {feedback ? "Check Feedback" : "View Interview"}
+              {isOwner && feedback ? "Check Feedback" : "View Interview"}
             </Link>
           </Button>
         </div>

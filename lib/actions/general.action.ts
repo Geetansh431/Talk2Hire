@@ -100,6 +100,21 @@ export async function createFeedback(params: CreateFeedbackParams) {
 export async function GetFeedbackByInterviewId(params: GetFeedbackByInterviewIdParams): Promise<Feedback | null> {
     const { interviewId, userId } = params;
 
+    // First check if the interview exists and belongs to the user
+    const interview = await db
+        .collection('interviews')
+        .doc(interviewId)
+        .get();
+
+    if (!interview.exists) return null;
+    
+    const interviewData = interview.data() as Interview;
+    
+    // Only allow access if the user owns the interview
+    if (interviewData.userId !== userId) {
+        return null;
+    }
+
     const feedback = await db
         .collection('feedback')
         .where("interviewId", "==", interviewId)
